@@ -1,19 +1,18 @@
-var rows = 25;
-var cols = 25;
-var w = 50;
-var h = 50;
+var rows = 15;
+var cols = 15;
+var w = 35;
+var h = 35;
 var cells = [];
 var x = 0;
 var y = 0;
 var path = []
-
 
 function setup(){
     createCanvas(w*cols, h*rows);
     noFill();
     stroke(255);
     strokeWeight(2);
-    frameRate(25);
+    frameRate(20);
     reset();
 }
 
