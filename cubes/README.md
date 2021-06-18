@@ -8,3 +8,5 @@ This project is a "from scratch" isometric renderer. It enables the user to gene
 - Positioning of render within frame.
 - Filtering blocktypes.
 - 
+
+![Test Image](/images/terrain.jpg){:width="50%"}

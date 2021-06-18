@@ -1,6 +1,6 @@
 """cubes.py: """
 
-from tools import add, sub 
+from tools import add, sub, get_mean, dist
 from PIL import Image, ImageDraw
 
 RAY_DIRECTION = (1, -1, 1)
@@ -11,7 +11,15 @@ YELLOW = (255, 255, 0)
 RED = (255, 0, 0)
 
 CUBE_FILLS = [
-    (82, 148, 25)
+    (82, 148, 25),
+    (52, 52, 52),
+    (50, 166, 168),
+    (117, 76, 11)
+]
+EDGE_CHECKS = [
+    (0, 0, 1),
+    (1, 1, 1),
+    (2, 0, -1)
 ]
 
 class IsometricRenderer:
@@ -19,37 +27,51 @@ class IsometricRenderer:
     def __init__(self, options={}):
         self.options = options
 
-        self.triange_edge = options.get("triangle_edge", 100)
-        self.triange_height = options.get("triangle_height", 3**0.5/2 * self.triange_edge)
-        self.margin = options.get("margin", 10)
+        self.triangle_edge = options.get("triangle_edge", 100)
+        self.triangle_height = options.get("triangle_height", 3**0.5/2 * self.triangle_edge)
+        self.margin = options.get("margin", 0)
 
     def render(self, data, file_path):
         # evaluate limits of input data
+        x_min = min(x for x, _, _ in data)
+        y_min = min(y for _, y, _ in data)
+        z_min = min(z for _, _, z in data)
         x_max = max(x for x, _, _ in data)+1
         y_max = max(y for _, y, _ in data)+1
         z_max = max(z for _, _, z in data)+1
+        x_range = x_max - x_min
+        y_range = y_max - y_min
+        z_range = z_max - z_min
 
-        def check_point_within_limits(xyz):
-            if x < 0 or x >= x_max:
-                return False
-            if y < 0 or y >= x_max:
-                return False
-            if z < 0 or z >= x_max:
-                return False
-            return True
+        print("x_min:", x_min, "y_min:", y_min, "z_min:", z_min)
+        print("x_max:", x_max, "y_max:", y_max, "z_max:", z_max)
+
+
+        # def check_point_within_limits(xyz):
+        #     if x < x_min or x >= x_max:
+        #         return False
+        #     if y < y_min or y >= x_max:
+        #         return False
+        #     if z < z_min or z >= x_max:
+        #         return False
+        #     return True
 
         def get_index(args):
             (x, y, z) = args
-            if x < 0 or x >= x_max or y < 0 or y >= y_max or z < 0 or z >= z_max:
+            if x < x_min or x >= x_max or y < y_min or y >= y_max or z < z_min or z >= z_max:
                 return -1
-            return x + y * x_max + z * (x_max * y_max)
+            return (x-x_min) + (y-y_min) * x_range + (z-z_min) * (x_range * y_range)
 
         # convert input data to an array
-        cubes = [None] * x_max * y_max * z_max
+        cubes = [None] * x_range * y_range * z_range
         for point in data:
             index = get_index(point)
             cube = data[point]
-            cubes[index] = cube
+            try:
+                cubes[index] = cube
+            except:
+                print(point, index)
+                exit()
 
         def get_cube(point):
             index = get_index(point)
@@ -60,6 +82,8 @@ class IsometricRenderer:
         i_max = x_max + y_max
         j_max = (y_max + z_max) * 2
 
+        print("i_max:", i_max, "j_max:", j_max)
+
         def check_triangle_in_limits(i, j):
             if i < 0 or j < 0:
                 return False
@@ -67,14 +91,19 @@ class IsometricRenderer:
                 return False
             return True
 
-        offset = (z_max + (x_max**2 + y_max**2)**0.5)
-        image_width = int(i_max * self.triange_height + 2 * self.margin)
-        image_height = int(offset * self.triange_edge + 2 * self.margin)
+        image_width = int(i_max * self.triangle_height + 2 * self.margin)
+        image_height = int((j_max + i_max) * 0.5 * self.triangle_edge - y_max * self.triangle_edge)
+        # offset = (z_max + (x_max**2 + y_max**2)**0.5)
+        # image_height = int(offset * self.triangle_edge + 2 * self.margin)
 
         def transform(p):
             # TODO: need to decide what to round to here/if its needed (i think it is due to pixels.)
-            x = round(p[0] + self.margin)
-            y = round(image_height - i_max * 0.5 * self.triange_edge - (p[1] + self.margin))
+            x, y = p
+
+            y = image_height - (y + (i_max - 2) * 0.5 * self.triangle_edge - 0.5 * y_max * self.triangle_edge)
+
+            # x = round(p[0] + self.margin)
+            # y = round(image_height - i_max * 0.5 * self.triangle_edge - (p[1] + self.margin))
             return (x, y)
 
         image = Image.new('RGB', (image_width, image_height), WHITE)
@@ -120,13 +149,13 @@ class IsometricRenderer:
         def get_triangle(i, j):
             if j % 2 == 0: # Left
                 j_offset = 0.5*(2+j-i)
-                a = (i * self.triange_height, j_offset * self.triange_edge)
-                b = ((i+1) * self.triange_height, (j_offset+0.5) * self.triange_edge)
-                c = ((i+1) * self.triange_height, (j_offset-0.5) * self.triange_edge)
+                a = (i * self.triangle_height, j_offset * self.triangle_edge)
+                b = ((i+1) * self.triangle_height, (j_offset+0.5) * self.triangle_edge)
+                c = ((i+1) * self.triangle_height, (j_offset-0.5) * self.triangle_edge)
             else:
-                a = ((i+1) * self.triange_height, ((j+1)/2+0.5-0.5*i) * self.triange_edge)
-                b = (i * self.triange_height, ((j+1)/2-0.5*i) * self.triange_edge)
-                c = (i * self.triange_height, ((j+1)/2+1-0.5*i) * self.triange_edge)
+                a = ((i+1) * self.triangle_height, ((j+1)/2+0.5-0.5*i) * self.triangle_edge)
+                b = (i * self.triangle_height, ((j+1)/2-0.5*i) * self.triangle_edge)
+                c = (i * self.triangle_height, ((j+1)/2+1-0.5*i) * self.triangle_edge)
             return [transform(p) for p in [a, b, c]]
 
         collisions = [None] * i_max * j_max
@@ -179,70 +208,48 @@ class IsometricRenderer:
             w, h = draw.textsize(text)
             draw.text((xy[0]-w/2, xy[1]-h/2), text, fill)
 
-        # is_left : true
-        # 0 : i, j+1
-        # 1 : i+1, j+1
-        # 2 : i, j-1
-
-        CHECKS = [
-            (0, 0, 1),
-            (1, 1, 1),
-            (2, 0, -1)
-        ]
-
-        def dist(a, b):
-            return abs(b[0]-a[0])+abs(b[1]-a[1])+abs(b[2]-a[2])
-
-        def get_mean(points):
-            return (sum(p[0] for p in points)/len(points), sum(p[1] for p in points)//len(points))
-
-        for i in range(i_max):
-            for j in range(j_max):
-                points = get_triangle(i, j) 
-                draw.polygon(points, fill=None, outline=RED)
-                
-
         # draw the edge lines
-        for i in range(i_max):
-            for j in range(j_max):
-                if j % 2 != 0 or not check_triangle_in_limits(i, j):
-                    continue
+        if True:
+            for i in range(i_max):
+                for j in range(j_max):
+                    if j % 2 != 0 or not check_triangle_in_limits(i, j):
+                        continue
 
-                collision = get_collision(i, j)
-                if collision is not None:
-                    cube_type, position, face = collision
-                points = get_triangle(i, j)
+                    collision = get_collision(i, j)
+                    if collision is not None:
+                        cube_type, position, face = collision
+                    points = get_triangle(i, j)
 
-                center = get_mean(points)
-                text = f"{(i, j)}\n{position}\n{face}" if collision is not None else f"{(i, j)}"
-                for check in CHECKS:
-                    k = check[0]
-                    ci = i+check[1]
-                    cj = j+check[2]
-                    other_points = get_triangle(ci, cj)
-                    other_center = get_mean(other_points)
-                    other_collision = get_collision(ci, cj)
-                    if other_collision is not None:
-                        other_cube_type, other_position, other_face = other_collision
+                    center = get_mean(points)
+                    text = f"{(i, j)}\n{position}\n{face}" if collision is not None else f"{(i, j)}"
+                    for check in EDGE_CHECKS:
+                        k = check[0]
+                        ci = i+check[1]
+                        cj = j+check[2]
+                        other_points = get_triangle(ci, cj)
+                        other_center = get_mean(other_points)
+                        other_collision = get_collision(ci, cj)
+                        if other_collision is not None:
+                            other_cube_type, other_position, other_face = other_collision
 
-                    draw_line = False
-                    if collision is None and other_collision is None:
                         draw_line = False
-                    elif collision is None or other_collision is None: # if one is none, draw line
-                        draw_line = True
-                    elif face != other_face: # if not the same face draw line
-                        draw_line = True
-                    elif cube_type != other_cube_type: # if not the same face draw line
-                        draw_line = True
-                    elif dist(position, other_position) > 1:
-                        draw_line = True
-                    else:
-                        draw_line = False
+                        if collision is None and other_collision is None:
+                            draw_line = False
+                        elif collision is None or other_collision is None: # if one is none, draw line
+                            draw_line = True
+                        elif face != other_face: # if not the same face draw line
+                            draw_line = True
+                        elif cube_type != other_cube_type: # if not the same face draw line
+                            draw_line = True
+                        elif dist(position, other_position) > 1:
+                            draw_line = True
+                        else:
+                            draw_line = False
 
-                    if draw_line:
-                        a = points[k]
-                        b = points[(k+1)%len(points)]
-                        draw.line((a, b), fill=BLACK, width=2)
+                        if draw_line:
+                            a = points[k]
+                            b = points[(k+1)%len(points)]
+                            draw.line((a, b), fill=BLACK, width=2)
 
         if False:
             for i in range(i_max):
@@ -259,11 +266,16 @@ class IsometricRenderer:
 
         image.save(file_path, quality=95)
 
+# 10, 1, 10
+# 1, 10, 1
+# 5, 5, 5
+
 if __name__ == "__main__":
     import random
     cubes = { }
-    for y in range(20):
-        for x in range(20):
+    cubes[(0, 0, 0)] = 0
+    for y in range(10):
+        for x in range(10):
             z_max = int(random.random() * 5) + 1
             for z in range(z_max):
                 cubes[(x, y, z)] = random.randint(0, 2)

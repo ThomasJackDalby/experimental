@@ -21,7 +21,6 @@ function setup() {
     x_patches_slider = createSliderInput("x_patches", "inputs-div", "X Patches", 1, 5, 1);
     y_patches_slider = createSliderInput("y_patches", "inputs-div", "Y Patches", 1, 5, 1);
     num_rotations_slider = createSliderInput("num_rotations", "inputs-div", "No. Rotations", 1, 4, 1);
-
     background_input = createColorPickerInput("background", "inputs-div", "Background");
     for(let i=0;i<4;i++) {
         curve_color_inputs.push(createColorPickerInput("curve_color_"+i, "inputs-div", "Curve #"+i+" Colour", '#ff0000'));

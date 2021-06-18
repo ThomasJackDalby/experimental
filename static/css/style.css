@@ -1,0 +1,19 @@
+body, .card-body {
+    background: rgb(45, 45, 45);
+    color: white;
+}
+
+.container {
+    background: rgb(51, 51, 51);
+}
+
+button, input {
+    color: white;
+    padding: 5px;
+    margin: 2px 0px;
+    width: 50%;
+}
+
+.form-control-color {
+    height: 40px;
+}
