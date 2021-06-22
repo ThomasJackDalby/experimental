@@ -1,5 +1,5 @@
 from perlin_noise import PerlinNoise
-from cubes import IsometricRenderer
+from isometric_renderer import IsometricRenderer
 
 SCALE = 0.9
 OCTAVES = 3
@@ -10,6 +10,13 @@ GRASS = 0
 ROCK = 1
 WATER = 2
 DIRT = 3
+
+CUBE_TYPES = [
+    (82, 148, 25),
+    (52, 52, 52),
+    (50, 166, 168),
+    (117, 76, 11)
+]
 
 noise = PerlinNoise(octaves=OCTAVES)
 data = { }
@@ -33,5 +40,5 @@ for y in range(X_MAX):
                 cube = GRASS
             data[(x, y, z)] = cube
 
-renderer = IsometricRenderer()
-renderer.render(data, "test.jpg")
+renderer = IsometricRenderer(cube_types=CUBE_TYPES)
+renderer.render(data, "examples/terrain.png")

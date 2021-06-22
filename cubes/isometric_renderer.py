@@ -1,6 +1,5 @@
-"""isometric_renderer.py: """
+"""isometric_renderer.py: Renders isometric images of voxels."""
 
-from numpy import isin
 from tools import add, sub, get_mean, dist
 from PIL import Image, ImageDraw
 
@@ -16,7 +15,7 @@ BLACK = (0, 0, 0)
 YELLOW = (255, 255, 0)
 RED = (255, 0, 0)
 
-DEBUG = True
+DEBUG = False
 
 class IsometricRenderer:
 
