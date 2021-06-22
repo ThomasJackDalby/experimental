@@ -21,7 +21,7 @@ ir.render(cubes, "example.png")
 
 The above example gives you this:
 
-![Example 1](/examples/example_1.png)
+![Example 1](examples/example_1.png)
 
 The `IsometricRenderer` class has optional constructor arguments you can use to customise the renders generated. See the code for specifics however the key one is `cube_types` which is a list of filles where the index of each element corresponds to the `cube_type`.
 
@@ -44,13 +44,13 @@ ir = IsometricRenderer(cube_types=cube_types)
 ir.render(cubes, "example_2.png")
 ```
 
-![Example 2](/examples/example_2.png)
+![Example 2](examples/example_2.png)
 
 Using these two options alone allows you to generate some quite different renders. 
 
-![Terrain](/examples/terrain.png)
+![Terrain](examples/terrain.png)
 
-![Reddit Artwork](/examples/reddit.png)
+![Reddit Artwork](examples/reddit.png)
 
 ## Issues/Backlog
 - Filtering of cube_types.
