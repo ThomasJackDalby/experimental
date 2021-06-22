@@ -2,4 +2,4 @@
 *.png
 *.gitignore
 
-!/examples/
+!/examples/**/*.png
