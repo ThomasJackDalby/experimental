@@ -50,7 +50,17 @@ Using these two options alone allows you to generate some quite different render
 
 ![Terrain](examples/terrain.png)
 
+This pseduo-terrain was generated using perlin noise, and setting some constraints to determine whether the block type is rock, dirt, grass or water.
+
+![Tetris](examples/tetris/tetris.png)
+
+Here is a pile of tetris pieces, created by randomly placing and rotating pieces in a normal distribution, then elevating them until they no longer collide with anything.
+
 ![Reddit Artwork](examples/reddit.png)
+
+Finally, here is a cut down version of the reddit piece I've reproduced. There's a few differences, and I haven't replicated all the special block types, however it satisfys what I wanted to get out of the exercise.
+
+> Note: The reason I didn't replicate all the block types, is they required a higher sub-cube count. The current supported shapes mean my sub-cube count is 12x12x12 however I would have to increase to 15x15x15 which would greatly increase the render time. Given some renders already have well over 1 million triangles, increasing this so much wasn't worth the optimisation.
 
 ## Issues/Backlog
 - Filtering of cube_types.
