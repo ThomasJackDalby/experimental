@@ -1,3 +1,5 @@
 # Relative ignores
 *.png
 *.gitignore
+
+!/examples/
