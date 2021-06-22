@@ -21,7 +21,9 @@ ir.render(cubes, "example.png")
 
 The above example gives you this:
 
-![Example 1](examples/example_1.png)
+<div style="text-align:center">
+    <img src="examples/example_1.png">
+</div>
 
 The `IsometricRenderer` class has optional constructor arguments you can use to customise the renders generated. See the code for specifics however the key one is `cube_types` which is a list of filles where the index of each element corresponds to the `cube_type`.
 
@@ -44,19 +46,27 @@ ir = IsometricRenderer(cube_types=cube_types)
 ir.render(cubes, "example_2.png")
 ```
 
-![Example 2](examples/example_2.png)
+<div style="text-align:center">
+    <img src="examples/example_2.png">
+</div>
 
 Using these two options alone allows you to generate some quite different renders. 
 
-![Terrain](examples/terrain.png)
+<div style="text-align:center">
+    <img src="examples/terrain.png" height="500">
+</div>
 
 This pseduo-terrain was generated using perlin noise, and setting some constraints to determine whether the block type is rock, dirt, grass or water.
 
-![Tetris](examples/tetris/tetris.png)
+<div style="text-align:center">
+    <img src="examples/tetris/tetris.png" height="500">
+</div>
 
 Here is a pile of tetris pieces, created by randomly placing and rotating pieces in a normal distribution, then elevating them until they no longer collide with anything.
 
-![Reddit Artwork](examples/reddit.png)
+<div style="text-align:center">
+    <img src="examples/reddit.png" height="500">
+</div>
 
 Finally, here is a cut down version of the reddit piece I've reproduced. There's a few differences, and I haven't replicated all the special block types, however it satisfys what I wanted to get out of the exercise.
 
