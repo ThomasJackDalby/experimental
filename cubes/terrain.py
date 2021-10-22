@@ -1,5 +1,7 @@
 from perlin_noise import PerlinNoise
-from isometric_renderer import IsometricRenderer
+from cubes import RayTracer, SolidFillRenderer
+from rich.traceback import install
+install(show_locals=True)
 
 SCALE = 0.9
 OCTAVES = 3
@@ -40,5 +42,8 @@ for y in range(X_MAX):
                 cube = GRASS
             data[(x, y, z)] = cube
 
-renderer = IsometricRenderer(cube_types=CUBE_TYPES)
-renderer.render(data, "examples/terrain.png")
+ray_tracer = RayTracer()
+scene = ray_tracer.ray_trace(data)
+
+renderer = SolidFillRenderer(cube_types=CUBE_TYPES)
+renderer.render(scene, "examples/terrain.png")

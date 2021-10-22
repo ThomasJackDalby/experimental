@@ -1,8 +1,11 @@
-from isometric_renderer import IsometricRenderer
+from cubes import RayTracer, SolidFillRenderer
 
 cubes = {
     (0, 0, 0) : 0
 }
 
-ir = IsometricRenderer()
-ir.render(cubes, "examples/example_1.png")
+ray_tracer = RayTracer()
+scene = ray_tracer.ray_trace(cubes)
+
+renderer = SolidFillRenderer()
+renderer.render(scene, "examples/example_1.png")

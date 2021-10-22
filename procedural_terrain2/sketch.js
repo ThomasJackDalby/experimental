@@ -64,4 +64,3 @@ function draw() {
   renderer.createBuffers("!", geometry);
   renderer.drawBuffersScaled("!", 1000, 1000, 500);
 }
-TheG1tHubGuy

@@ -1,5 +1,5 @@
 import json, random, numpy, os
-from isometric_renderer import IsometricRenderer
+from cubes import IsometricRenderer
 
 DEFAULT_DATA_FILE_PATH = "reddit.json"
 FILLS = [
@@ -160,12 +160,20 @@ def get_scaled_cubes(cube_types, width, height, fills):
 if __name__ == "__main__":
     import argparse, json
     
+    # hex_colours = [
+    #     "3C4C55",
+    #     "446268",
+    #     "5C8C9B",
+    #     "9ABAB4",
+    #     "B4F5EE"
+    # ]
+
     hex_colours = [
-        "3C4C55",
-        "446268",
-        "5C8C9B",
-        "9ABAB4",
-        "B4F5EE"
+        "e8e9f3",
+        "cecece",
+        "a6a6a8",
+        "272635",
+        "b1e5f2"
     ]
 
     parser = argparse.ArgumentParser(description='Process some integers.')
@@ -178,8 +186,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     config = {
-        "width" : 5,
-        "depth" : 5,
+        "width" : 30,
+        "depth" : 20,
         "hex_fills" : hex_colours
     }
     if args.load is not None: 

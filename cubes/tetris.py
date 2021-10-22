@@ -1,8 +1,11 @@
-"""tetris.py: Renders a tetris-esk scene using the IsometricRenderer"""
+"""tetris.py: Renders a tetris-esk scene using the SolidFillRenderer"""
+
 import random
 from numpy.random import normal
-from tools import add
-from isometric_renderer import IsometricRenderer
+from cubes.tools import add
+from cubes import RayTracer, SolidFillRenderer
+from rich.traceback import install
+install(show_locals=True)
 
 TETRIS_PIECES = [
     [(-1, 0, 0), (-1, 1, 0), (0, 0, 0), (1, 0, 0)],
@@ -26,10 +29,12 @@ NUMBER_OF_PIECES = 500
 STANDARD_DEVIATION = 6
 BASE_SIZE = 30
 
-renderer = IsometricRenderer()
+ray_tracer = RayTracer()
+renderer = SolidFillRenderer()
 piece_index = 0
 for piece in TETRIS_PIECES:
-    renderer.render({ p : 0 for p in piece }, f"examples/tetris/{piece_index}.png")
+    scene = ray_tracer.ray_trace({ p : 0 for p in piece })
+    renderer.render(scene, f"examples/tetris/{piece_index}.png")
     piece_index += 1
 
 def rotate_xy(piece):
@@ -77,6 +82,6 @@ for cube_index in range(NUMBER_OF_PIECES):
     for cube in transformed_piece:
         cubes[cube] = cube_index
 
-# cube_types = [(int(random.random()*255),int(random.random()*255),int(random.random()*255)) for i in range(NUMBER_OF_PIECES)]
-renderer = IsometricRenderer(cube_types=cube_types)
-renderer.render(cubes, f"examples/tetris/tetris.png")
+scene = ray_tracer.ray_trace(cubes)
+renderer = SolidFillRenderer(cube_types=cube_types)
+renderer.render(scene, f"examples/tetris/tetris.png")
